@@ -7,7 +7,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Copy, Trash } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../../../components/ui/button";
 
 interface AgentActionsProps {
 	agentId: string;
