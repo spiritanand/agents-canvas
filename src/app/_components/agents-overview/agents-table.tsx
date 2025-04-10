@@ -20,66 +20,13 @@ import {
 	AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 import { api } from "~/trpc/react";
-import { useState } from "react";
-import { toast } from "sonner";
 import { format } from "date-fns";
+import { useDeleteAgent, useDuplicateAgent } from "./hooks/use-agent-mutations";
 
 export default function AgentsTable() {
-	const [deleteId, setDeleteId] = useState<string | null>(null);
-	const trpc = api.useUtils();
 	const [agents] = api.agents.list.useSuspenseQuery();
-
-	const duplicateAgent = api.agents.duplicate.useMutation({
-		onMutate: ({ id }) => {
-			const agent = agents.find((a) => a.id === id);
-			const toastId = `duplicate-${id}`;
-
-			toast.loading(`Duplicating ${agent?.name || "agent"}...`, {
-				id: toastId,
-			});
-
-			return { agent, toastId };
-		},
-		onSuccess: (_, { id }, context) => {
-			const agent = agents.find((a) => a.id === id);
-			toast.success(`${agent?.name || "Agent"} duplicated successfully`, {
-				id: context?.toastId,
-			});
-			void trpc.agents.list.invalidate();
-		},
-		onError: (_, { id }, context) => {
-			toast.error("Failed to duplicate agent", {
-				id: context?.toastId,
-			});
-		},
-	});
-
-	const deleteAgent = api.agents.delete.useMutation({
-		onMutate: async (deleteInput) => {
-			// Cancel outgoing fetches
-			await trpc.agents.list.cancel();
-
-			// Get current data
-			const prevData = trpc.agents.list.getData();
-
-			// Optimistically remove the agent
-			trpc.agents.list.setData(undefined, (old) => {
-				if (!old) return old;
-				return old.filter((agent) => agent.id !== deleteInput.id);
-			});
-
-			return { prevData };
-		},
-		onError: (err, newAgent, context) => {
-			// If the mutation fails, restore the previous data
-			trpc.agents.list.setData(undefined, context?.prevData);
-		},
-		onSettled: () => {
-			setDeleteId(null);
-			void trpc.agents.list.invalidate();
-		},
-	});
-
+	const duplicateAgent = useDuplicateAgent();
+	const { deleteId, setDeleteId, deleteAgent } = useDeleteAgent();
 	const agentToDelete = agents.find((agent) => agent.id === deleteId);
 
 	return (
