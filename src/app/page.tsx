@@ -1,13 +1,5 @@
-import { Button } from "~/components/ui/button";
-import { auth } from "~/server/auth";
+import AgentsOverview from "./_components/agents-overview";
 
-export default async function Home() {
-	const session = await auth();
-
-	return (
-		<main>
-			<Button>Click me</Button>
-			<pre>{JSON.stringify(session, null, 2)}</pre>
-		</main>
-	);
+export default function Home() {
+	return <AgentsOverview />;
 }
