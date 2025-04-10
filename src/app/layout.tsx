@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "~/components/ui/sonner";
+import Topbar from "~/components/topbar";
 
 export const metadata: Metadata = {
 	title: "Agents Canvas",
@@ -24,7 +25,10 @@ export default function RootLayout({
 	return (
 		<html lang="en" className={`dark ${geist.variable}`}>
 			<body>
-				<TRPCReactProvider>{children}</TRPCReactProvider>
+				<TRPCReactProvider>
+					<Topbar />
+					{children}
+				</TRPCReactProvider>
 				<Toaster richColors />
 			</body>
 		</html>
