@@ -14,7 +14,7 @@ export const duplicate = protectedProcedure
     return ctx.db.agent.create({
       data: {
         name: `${agent.name} (Copy)`,
-        status: agent.status,
+        status: false,
         createdById: ctx.session.user.id,
       },
     });
