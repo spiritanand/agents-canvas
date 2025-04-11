@@ -136,7 +136,7 @@ function AgentsCanvasContent({ agentId }: { agentId: string }) {
 	const [isPanelOpen, setIsPanelOpen] = useState(true);
 	const { fitView } = useReactFlow();
 
-	const { mutate: updateCanvas } = api.nodes.updateCanvas.useMutation();
+	const { mutate: updateCanvas } = api.canvas.update.useMutation();
 
 	const debouncedSave = useCallback(
 		debounce((nodes: Node[], edges: Edge[]) => {
