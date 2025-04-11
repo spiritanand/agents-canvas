@@ -10,6 +10,15 @@ import {
 	BackgroundVariant,
 	useReactFlow,
 	ReactFlowProvider,
+	addEdge,
+	applyNodeChanges,
+	applyEdgeChanges,
+	type NodeChange,
+	type EdgeChange,
+	type Connection,
+	ConnectionMode,
+	type Node,
+	type Edge,
 } from "@xyflow/react";
 import {
 	ChevronRight,
@@ -107,7 +116,9 @@ const NODES_CONFIG: Record<string, NodeCategoryConfig> = {
 	},
 };
 
-const initialNodes = [
+type CustomNode = Node<{ label: string }>;
+
+const initialNodes: CustomNode[] = [
 	{
 		id: "1",
 		type: "trigger",
@@ -122,13 +133,25 @@ const initialNodes = [
 	},
 ];
 
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+const initialEdges: Edge[] = [{ id: "e1-2", source: "1", target: "2" }];
 
 function AgentsCanvasContent() {
-	const [nodes, setNodes] = useState(initialNodes);
-	const [edges, setEdges] = useState(initialEdges);
+	const [nodes, setNodes] = useState<CustomNode[]>(initialNodes);
+	const [edges, setEdges] = useState<Edge[]>(initialEdges);
 	const [isPanelOpen, setIsPanelOpen] = useState(true);
 	const { fitView } = useReactFlow();
+
+	const onNodesChange = useCallback((changes: NodeChange[]) => {
+		setNodes((nds) => applyNodeChanges(changes, nds) as CustomNode[]);
+	}, []);
+
+	const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+		setEdges((eds) => applyEdgeChanges(changes, eds));
+	}, []);
+
+	const onConnect = useCallback((params: Connection) => {
+		setEdges((eds) => addEdge(params, eds));
+	}, []);
 
 	const addNode = useCallback(
 		(nodeConfig: NodeConfig) => {
@@ -170,11 +193,19 @@ function AgentsCanvasContent() {
 					nodes={nodes}
 					edges={edges}
 					nodeTypes={nodeTypes}
+					onNodesChange={onNodesChange}
+					onEdgesChange={onEdgesChange}
+					onConnect={onConnect}
 					fitView
-					className="bg-background"
+					connectionMode={ConnectionMode.Strict}
+					defaultEdgeOptions={{
+						animated: true,
+						style: { stroke: "#64748b" },
+					}}
 				>
 					<Background variant={BackgroundVariant.Dots} gap={12} size={1} />
 					<Controls />
+					<MiniMap />
 				</ReactFlow>
 			</div>
 

@@ -14,14 +14,16 @@ interface StatusChangeDropdownProps {
 	agentId: string;
 	agentName: string;
 	status: boolean;
+	caller?: "list" | "get";
 }
 
 export function StatusChangeDropdown({
 	agentId,
 	agentName,
 	status,
+	caller = "list",
 }: StatusChangeDropdownProps) {
-	const updateStatus = useUpdateAgentStatus();
+	const updateStatus = useUpdateAgentStatus(caller);
 
 	return (
 		<DropdownMenu>

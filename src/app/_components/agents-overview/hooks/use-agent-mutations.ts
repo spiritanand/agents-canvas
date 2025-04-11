@@ -1,3 +1,5 @@
+"use client";
+
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 import { useState } from "react";
@@ -64,7 +66,7 @@ export function useDeleteAgent() {
   };
 }
 
-export function useUpdateAgentStatus() {
+export function useUpdateAgentStatus(caller: "list" | "get" = "list") {
   const trpc = api.useUtils();
 
   return api.agents.update.useMutation({
@@ -79,14 +81,24 @@ export function useUpdateAgentStatus() {
         );
       });
 
+      if (caller === "get") {
+        trpc.agents.get.setData({ id }, (old) => {
+          if (!old) return old;
+          return { ...old, status: status ?? false };
+        });
+      }
+
       return { prevData };
     },
     onError: (_err, _newAgent, context) => {
       trpc.agents.list.setData(undefined, context?.prevData);
       toast.error("Failed to update agent status");
     },
-    onSettled: () => {
+    onSettled: (data) => {
       void trpc.agents.list.invalidate();
+      if (caller === "get") {
+        void trpc.agents.get.invalidate({ id: data?.id });
+      }
     },
   });
 }

@@ -5,6 +5,7 @@ import { duplicate } from "./duplicate";
 import { get } from "./get";
 import { list } from "./list";
 import { update } from "./update";
+import { run } from "./run";
 
 export const agentsRouter = createTRPCRouter({
   create,
@@ -13,4 +14,5 @@ export const agentsRouter = createTRPCRouter({
   get,
   list,
   update,
+  run,
 });

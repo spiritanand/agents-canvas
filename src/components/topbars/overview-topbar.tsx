@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { signOut } from "~/server/auth";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Bot } from "lucide-react";
 import {
 	AlertDialog,
@@ -12,9 +12,9 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "./ui/alert-dialog";
+} from "../ui/alert-dialog";
 
-export default function Topbar() {
+export default function OverviewTopbar() {
 	return (
 		<nav className="flex items-center justify-between border-b px-8 py-4">
 			<Link href="/">
