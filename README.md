@@ -1,29 +1,103 @@
-# Create T3 App
+# Agents Canvas
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A modern web application built with the T3 Stack, featuring a canvas-based interface for agent management and visualization.
 
-## What's next? How do I make an app with this?
+## Tech Stack
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **UI Components**: Shadcn UI, Radix UI
+- **State Management**: React Query, tRPC
+- **Database**: Prisma with PostgreSQL
+- **Authentication**: Auth.js
+- **Form Handling**: React Hook Form with Zod validation
+- **Visualization**: React Flow (@xyflow/react)
+- **Code Quality**: Biome
+- **Package Manager**: pnpm
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Features
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Modern, responsive UI with dark mode support
+- Canvas-based agent visualization
+- Real-time data updates
+- Type-safe API with tRPC
+- Secure authentication
+- Form validation with Zod
+- Database migrations and schema management
+- Code quality enforcement with Biome
 
-## Learn More
+## Getting Started
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+1. Clone the repository
+2. Install dependencies:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+   ```bash
+   pnpm install
+   ```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+3. Set up environment variables:
 
-## How do I deploy this?
+   ```bash
+   cp .env.example .env
+   ```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+4. Start the development server:
+
+   ```bash
+   pnpm dev
+   ```
+
+## Database Setup
+
+1. Start the database:
+
+   ```bash
+   ./start-database.sh
+   ```
+
+2. Run migrations:
+
+   ```bash
+   pnpm db:generate
+   ```
+
+3. Access Prisma Studio:
+
+   ```bash
+   pnpm db:studio
+   ```
+
+## Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm check` - Run Biome checks
+- `pnpm typecheck` - Run TypeScript checks
+- `pnpm db:generate` - Generate Prisma client
+- `pnpm db:migrate` - Run database migrations
+- `pnpm db:studio` - Open Prisma Studio
+
+## Project Structure
+
+```
+src/
+├── app/          # Next.js app router pages
+├── components/ui/ # Reusable UI components
+├── lib/          # Utility functions and configurations
+├── server/       # Server-side code and API routes
+├── styles/       # Global styles and Tailwind config
+├── trpc/         # tRPC router and procedures
+├── types/        # TypeScript type definitions
+├── env.js        # Environment validation
+└── middleware.ts # Next.js middleware
+```
+
+## Environment Variables
+
+Required environment variables are defined in `.env.example`. Make sure to set them up in your `.env` file.
+
+## License
+
+MIT
