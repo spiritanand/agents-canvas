@@ -12,7 +12,7 @@ export async function findAgentOrThrow({ ctx, agentId }: { ctx: Context; agentId
   if (!agent) {
     throw new TRPCError({
       code: "NOT_FOUND",
-      message: "Agent not found",
+      message: "Agent not found or you are not authorized to access it!",
     });
   }
 

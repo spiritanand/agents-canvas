@@ -11,10 +11,6 @@ export default function EditorTopbar({ agentId }: { agentId: string }) {
 	const [agent] = api.agents.get.useSuspenseQuery({ id: agentId });
 	const utils = api.useUtils();
 
-	if (!agent) {
-		return null;
-	}
-
 	const { mutate: runAgent } = api.agents.run.useMutation({
 		onSuccess: () => {
 			toast.success(`${agent.name} is running`);

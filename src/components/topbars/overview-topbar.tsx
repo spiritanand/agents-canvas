@@ -1,5 +1,6 @@
+"use client";
+
 import Link from "next/link";
-import { signOut } from "~/server/auth";
 import { Button } from "../ui/button";
 import { Bot } from "lucide-react";
 import {
@@ -13,6 +14,7 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { signOut } from "next-auth/react";
 
 export default function OverviewTopbar() {
 	return (
@@ -37,14 +39,10 @@ export default function OverviewTopbar() {
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<form
-							action={async () => {
-								"use server";
-								await signOut();
-							}}
-						>
-							<AlertDialogAction type="submit">Sign out</AlertDialogAction>
-						</form>
+
+						<AlertDialogAction onClick={() => signOut()}>
+							Sign out
+						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
