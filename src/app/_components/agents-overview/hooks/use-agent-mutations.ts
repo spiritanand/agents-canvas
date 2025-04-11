@@ -63,3 +63,30 @@ export function useDeleteAgent() {
     deleteAgent: mutation,
   };
 }
+
+export function useUpdateAgentStatus() {
+  const trpc = api.useUtils();
+
+  return api.agents.update.useMutation({
+    onMutate: async ({ id, status }) => {
+      await trpc.agents.list.cancel();
+      const prevData = trpc.agents.list.getData();
+
+      trpc.agents.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((agent) =>
+          agent.id === id ? { ...agent, status: status ?? false } : agent
+        );
+      });
+
+      return { prevData };
+    },
+    onError: (_err, _newAgent, context) => {
+      trpc.agents.list.setData(undefined, context?.prevData);
+      toast.error("Failed to update agent status");
+    },
+    onSettled: () => {
+      void trpc.agents.list.invalidate();
+    },
+  });
+}

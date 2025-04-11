@@ -1,6 +1,5 @@
 "use client";
 
-import { AgentActions } from "./agent-actions";
 import {
 	Table,
 	TableBody,
@@ -20,8 +19,11 @@ import {
 	AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 import { api } from "~/trpc/react";
-import { format } from "date-fns";
-import { useDeleteAgent, useDuplicateAgent } from "./hooks/use-agent-mutations";
+import {
+	useDeleteAgent,
+	useDuplicateAgent,
+} from "../hooks/use-agent-mutations";
+import { AgentTableRow } from "./table-row";
 
 export default function AgentsTable() {
 	const [agents] = api.agents.list.useSuspenseQuery();
@@ -44,34 +46,12 @@ export default function AgentsTable() {
 				<TableBody>
 					{agents.length > 0 ? (
 						agents.map((agent) => (
-							<TableRow key={agent.id}>
-								<TableCell className="font-medium">{agent.name}</TableCell>
-								<TableCell>
-									<span
-										className={`inline-flex items-center rounded-full px-2.5 py-0.5 font-medium text-xs ${
-											agent.status
-												? "bg-green-100 text-green-800"
-												: "bg-gray-100 text-gray-800"
-										}`}
-									>
-										{agent.status ? "Active" : "Inactive"}
-									</span>
-								</TableCell>
-								<TableCell>{format(agent.editedAt, "do MMM yy")}</TableCell>
-								<TableCell>
-									{agent.lastRunAt
-										? format(agent.lastRunAt, "do MMM yy")
-										: "Never"}
-								</TableCell>
-								<TableCell>
-									<AgentActions
-										agentId={agent.id}
-										onEdit={(id) => console.log("Edit", id)}
-										onDuplicate={(id) => duplicateAgent.mutate({ id })}
-										onDelete={(id) => setDeleteId(id)}
-									/>
-								</TableCell>
-							</TableRow>
+							<AgentTableRow
+								key={agent.id}
+								agent={agent}
+								onDuplicate={(id) => duplicateAgent.mutate({ id })}
+								onDelete={(id) => setDeleteId(id)}
+							/>
 						))
 					) : (
 						<TableRow>
