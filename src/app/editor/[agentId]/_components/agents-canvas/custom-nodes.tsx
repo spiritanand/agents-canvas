@@ -34,14 +34,14 @@ export function AddinNode({ data, isConnectable }: NodeProps) {
 				type="target"
 				position={Position.Top}
 				isConnectable={isConnectable}
-				className="bg-violet-500"
+				className="!bg-violet-500"
 			/>
 			<div className="font-medium text-sm">{data.label}</div>
 			<Handle
 				type="source"
 				position={Position.Bottom}
 				isConnectable={isConnectable}
-				className="bg-violet-500"
+				className="!bg-violet-500"
 			/>
 		</div>
 	);

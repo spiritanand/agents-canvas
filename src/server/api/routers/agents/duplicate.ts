@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { protectedProcedure } from "~/server/api/trpc";
 import { findAgentOrThrow } from "./utils";
+import type { Prisma } from "@prisma/client";
 
 export const duplicate = protectedProcedure
   .input(
@@ -16,6 +17,7 @@ export const duplicate = protectedProcedure
         name: `${agent.name} (Copy)`,
         status: false,
         createdById: ctx.session.user.id,
+        canvas: agent.canvas as Prisma.InputJsonValue,
       },
     });
   });

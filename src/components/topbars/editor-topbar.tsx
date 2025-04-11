@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bot, Play } from "lucide-react";
+import { ArrowLeft, Bot, Play } from "lucide-react";
 import { Button } from "../ui/button";
 import { StatusChangeDropdown } from "~/app/_components/agents-overview/agents-table/status-change-dropdown";
 import { toast } from "sonner";
@@ -28,8 +28,13 @@ export default function EditorTopbar({ agentId }: { agentId: string }) {
 
 	return (
 		<nav className="flex items-center justify-between border-b px-8 py-4">
-			<Link href="/">
-				<Bot size={32} />
+			<Link href="/" className="group flex items-center gap-2">
+				<ArrowLeft
+					size={16}
+					className="transition-transform duration-200 group-hover:translate-x-[-2px]"
+				/>
+				<span className="text-sm">/</span>
+				<h4 className="font-bold text-2xl">{agent.name}</h4>
 				<span className="sr-only">Agents Canvas</span>
 			</Link>
 

@@ -31,16 +31,29 @@ export function AgentActions({
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem onClick={() => onEdit?.(agentId)}>
+				<DropdownMenuItem
+					onClick={(e) => {
+						e.stopPropagation();
+						onEdit?.(agentId);
+					}}
+				>
 					<Pencil className="mr-2 h-4 w-4" />
 					Edit
 				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => onDuplicate?.(agentId)}>
+				<DropdownMenuItem
+					onClick={(e) => {
+						e.stopPropagation();
+						onDuplicate?.(agentId);
+					}}
+				>
 					<Copy className="mr-2 h-4 w-4" />
 					Duplicate
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					onClick={() => onDelete?.(agentId)}
+					onClick={(e) => {
+						e.stopPropagation();
+						onDelete?.(agentId);
+					}}
 					className="text-red-600 focus:text-red-600"
 				>
 					<Trash className="mr-2 h-4 w-4" />
