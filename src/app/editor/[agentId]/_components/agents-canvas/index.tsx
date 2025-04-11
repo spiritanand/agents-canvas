@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type { LucideIcon } from "lucide-react";
+import debounce from "lodash.debounce";
 import {
 	ReactFlow,
 	Background,
@@ -44,6 +45,10 @@ import {
 } from "~/components/ui/tooltip";
 
 import "@xyflow/react/dist/style.css";
+
+import { api } from "~/trpc/react";
+import { isCanvasState } from "~/types/canvas";
+import type { CanvasState } from "~/types/canvas";
 
 const nodeTypes = {
 	trigger: TriggerNode,
@@ -116,42 +121,79 @@ const NODES_CONFIG: Record<string, NodeCategoryConfig> = {
 	},
 };
 
-type CustomNode = Node<{ label: string }>;
+function AgentsCanvasContent({ agentId }: { agentId: string }) {
+	const [agent] = api.agents.get.useSuspenseQuery({ id: agentId });
+	const initialCanvas = isCanvasState(agent.canvas)
+		? agent.canvas
+		: { nodes: [], edges: [] };
 
-const initialNodes: CustomNode[] = [
-	{
-		id: "1",
-		type: "trigger",
-		position: { x: 0, y: 0 },
-		data: { label: "Incoming Email" },
-	},
-	{
-		id: "2",
-		type: "addin",
-		position: { x: 0, y: 100 },
-		data: { label: "Store to database" },
-	},
-];
-
-const initialEdges: Edge[] = [{ id: "e1-2", source: "1", target: "2" }];
-
-function AgentsCanvasContent() {
-	const [nodes, setNodes] = useState<CustomNode[]>(initialNodes);
-	const [edges, setEdges] = useState<Edge[]>(initialEdges);
+	const [nodes, setNodes] = useState<Node[]>(
+		initialCanvas.nodes as unknown as Node[],
+	);
+	const [edges, setEdges] = useState<Edge[]>(
+		initialCanvas.edges as unknown as Edge[],
+	);
 	const [isPanelOpen, setIsPanelOpen] = useState(true);
 	const { fitView } = useReactFlow();
 
-	const onNodesChange = useCallback((changes: NodeChange[]) => {
-		setNodes((nds) => applyNodeChanges(changes, nds) as CustomNode[]);
-	}, []);
+	const { mutate: updateCanvas } = api.nodes.updateCanvas.useMutation();
 
-	const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-		setEdges((eds) => applyEdgeChanges(changes, eds));
-	}, []);
+	const debouncedSave = useCallback(
+		debounce((nodes: Node[], edges: Edge[]) => {
+			const canvas: CanvasState = {
+				nodes: nodes.map((node) => ({
+					id: node.id,
+					type: node.type ?? "default",
+					position: node.position,
+					data: node.data ?? {},
+				})),
+				edges: edges.map((edge) => ({
+					id: edge.id,
+					source: edge.source,
+					target: edge.target,
+				})),
+			};
 
-	const onConnect = useCallback((params: Connection) => {
-		setEdges((eds) => addEdge(params, eds));
-	}, []);
+			updateCanvas({
+				agentId,
+				canvas,
+			});
+		}, 500),
+		[],
+	);
+
+	const onNodesChange = useCallback(
+		(changes: NodeChange[]) => {
+			const newNodes = applyNodeChanges(changes, nodes) as Node[];
+			setNodes(newNodes);
+			debouncedSave(newNodes, edges);
+		},
+		[nodes, edges, debouncedSave],
+	);
+
+	const onEdgesChange = useCallback(
+		(changes: EdgeChange[]) => {
+			const newEdges = applyEdgeChanges(changes, edges);
+			setEdges(newEdges);
+			debouncedSave(nodes, newEdges);
+		},
+		[nodes, edges, debouncedSave],
+	);
+
+	const onConnect = useCallback(
+		(params: Connection) => {
+			const newEdges = addEdge(params, edges);
+			setEdges(newEdges);
+			debouncedSave(nodes, newEdges);
+		},
+		[nodes, edges, debouncedSave],
+	);
+
+	useEffect(() => {
+		return () => {
+			debouncedSave.flush();
+		};
+	}, [debouncedSave]);
 
 	const addNode = useCallback(
 		(nodeConfig: NodeConfig) => {
@@ -187,7 +229,6 @@ function AgentsCanvasContent() {
 
 	return (
 		<div className="relative flex h-full">
-			{/* Main Canvas */}
 			<div className="h-full flex-1">
 				<ReactFlow
 					nodes={nodes}
@@ -288,11 +329,10 @@ function AgentsCanvasContent() {
 	);
 }
 
-// Wrap the component with ReactFlowProvider
-export default function AgentsCanvas() {
+export default function AgentsCanvas({ agentId }: { agentId: string }) {
 	return (
 		<ReactFlowProvider>
-			<AgentsCanvasContent />
+			<AgentsCanvasContent agentId={agentId} />
 		</ReactFlowProvider>
 	);
 }

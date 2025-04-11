@@ -13,7 +13,7 @@ export default async function AgentEditorPage({
 		<HydrateClient>
 			<EditorTopbar agentId={agentId} />
 			<main className="flex h-[calc(100vh-5rem)] flex-col overflow-hidden">
-				<AgentsCanvas />
+				<AgentsCanvas agentId={agentId} />
 			</main>
 		</HydrateClient>
 	);

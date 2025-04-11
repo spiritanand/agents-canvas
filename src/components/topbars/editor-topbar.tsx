@@ -19,6 +19,7 @@ export default function EditorTopbar({ agentId }: { agentId: string }) {
 		onSuccess: () => {
 			toast.success(`${agent.name} is running`);
 			void utils.agents.get.invalidate({ id: agentId });
+			void utils.agents.list.invalidate();
 		},
 		onError: (error) => {
 			toast.error(error.message || "Failed to run agent");
