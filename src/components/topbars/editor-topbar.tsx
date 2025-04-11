@@ -45,6 +45,7 @@ export default function EditorTopbar({ agentId }: { agentId: string }) {
 					variant="outline"
 					className="gap-2"
 					onClick={() => runAgent({ id: agentId })}
+					disabled={!agent.status}
 				>
 					<Play className="h-4 w-4" />
 					Run

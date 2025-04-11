@@ -19,6 +19,13 @@ export const run = protectedProcedure
       });
     }
 
+    if (!agent.status) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Agent is not active",
+      });
+    }
+
     return ctx.db.agent.update({
       where: {
         id: input.id,
